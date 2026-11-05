@@ -1,0 +1,140 @@
+{
+  "eval_set_id": "lease_negotiator_core_regression",
+  "name": "Car Lease Negotiator Core Tool & Audit Regression Suite",
+  "description": "Validates dealership lookup around ZIP 94550, padded dealer worksheet auditing, and apples-to-apples offer comparison.",
+  "eval_cases": [
+    {
+      "eval_id": "kia_dealers_near_94550",
+      "session_input": {
+        "app_name": "lease_negotiator",
+        "user_id": "eval_shopper",
+        "state": {}
+      },
+      "conversation": [
+        {
+          "invocation_id": "inv_kia_001",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "List Kia dealerships in the Central Valley within 60 miles of 94550 that I should email first for a Kia EV9."
+              }
+            ]
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [
+              {
+                "text": "Top Central Valley Kia dealerships within 60 miles of 94550 include Kia Country of Manteca (~32 miles), Kia of Stockton (~45 miles), and Valley Kia of Modesto (~56 miles). Start Wave 1 outreach with itemized lease worksheet emails requesting pre-incentive MSRP discount, KFA lease cash, and Tier-1 buy-rate MF."
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "list_dealerships_near_94550",
+                "args": {
+                  "brand": "Kia",
+                  "max_distance_miles": 60,
+                  "corridor_filter": "Central Valley"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "eval_id": "audit_padded_ev9_quote",
+      "session_input": {
+        "app_name": "lease_negotiator",
+        "user_id": "eval_shopper",
+        "state": {}
+      },
+      "conversation": [
+        {
+          "invocation_id": "inv_audit_002",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "Audit this dealer lease offer on a 2026 Kia EV9 Land AWD: MSRP $71,635, selling price $70,935, rebates $18,400, LoJack add-ons $1,695, doc fee $299, cash down $3,000, $5,495 total due at signing, $689/mo incl 10.25% tax for 36 months / 10,000 miles, residual 52%, quoted MF 0.00310 (buy rate 0.00255)."
+              }
+            ]
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [
+              {
+                "text": "This Kia EV9 Land quote is heavily padded: weak <1% dealer discount off MSRP, $1,695 in LoJack add-ons, illegal $299 California doc fee above the $85 statutory cap, marked-up Money Factor (0.00310 vs 0.00255 Tier-1 buy rate), and $3,000 risky cash cap reduction. Counter with 7.5% pre-incentive discount, $0 add-ons, $85 doc fee, $0 cash down, and 0.00255 buy-rate MF—and send the included email/SMS counteroffer."
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "audit_dealer_quote",
+                "args": {
+                  "vehicle_model": "2026 Kia EV9 Land AWD",
+                  "msrp": 71635.0,
+                  "selling_price": 70935.0,
+                  "quoted_monthly_with_tax": 689.0,
+                  "quoted_due_at_signing": 5495.0,
+                  "term_months": 36,
+                  "annual_miles": 10000,
+                  "rebates_and_lease_cash": 18400.0,
+                  "residual_percent": 52.0,
+                  "quoted_money_factor": 0.0031,
+                  "buy_rate_money_factor": 0.00255,
+                  "cash_down": 3000.0,
+                  "dealer_doc_fee": 299.0,
+                  "dealer_addons": 1695.0,
+                  "sales_tax_percent": 10.25
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "eval_id": "volvo_ex90_msd_profile",
+      "session_input": {
+        "app_name": "lease_negotiator",
+        "user_id": "eval_shopper",
+        "state": {}
+      },
+      "conversation": [
+        {
+          "invocation_id": "inv_volvo_003",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "Does Volvo Car Financial Services allow refundable MSDs on a Volvo EX90, how many maximum, and what is the VCFS acquisition fee?"
+              }
+            ]
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [
+              {
+                "text": "Yes—Volvo Car Financial Services (VCFS) supports up to 10 refundable Multiple Security Deposits (MSDs) on the Volvo EX90, lowering the Money Factor by 0.00005 per MSD (up to -0.00050 / -1.20% APR equivalent) without total-loss risk. The standard VCFS acquisition fee is $995."
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "get_vehicle_lease_profile",
+                "args": {
+                  "model_query": "Volvo EX90"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
